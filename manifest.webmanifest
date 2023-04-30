@@ -23,6 +23,7 @@
     "icons": [
         {
           "src": "/Recipes/img/Chemistry.png",
+          "background_color": "#ffffff",
           "type": "image/png",
           "sizes": "611x611"
         }
