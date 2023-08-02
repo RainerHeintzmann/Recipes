@@ -2,18 +2,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="canonical" href="https://rainerheintzmann.github.io/Recipes/" />
-  <link rel="manifest" href="/Recipes/manifest.webmanifest">
-
 <meta charset="UTF-8">
-<!-- jQuery library --> <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- jQuery UI library --> <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<style> .finished {background - color: red; } .current {background - color: green; } .future {background - color: gray; }</style>
+        <title>Timer App</title>
+        <!-- jQuery library --> <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- jQuery UI library --> <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+            <style> .finished {background - color: red; } .current {background - color: green; } .future {background - color: gray; }</style>
 
-<title>Recipes</title>
-
+<title>Timer App</title>
 <style>
 body {
 font-family: sans-serif;
@@ -24,9 +20,6 @@ border-collapse: collapse;
 table td {
 border: 1px solid black;
 padding: 10px;
-}
-.start {
-background-color: yellow;
 }
 .active {
 background-color: green;
@@ -54,86 +47,76 @@ background-color: gray;
 <script>
 // Define the recipe
 var recipe = [
-{time: 0, event: "Start Protocol", description: "The first step is to take an impression of the patient's teeth using a dental impression material, which is typically a type of silicone or alginate. The impression material is placed in a tray and inserted into the patient's mouth for a few minutes until it sets."},
-{time: 1000, event: "Impression-taking (10-20 min)", description: "Once the impression is taken, it is sent to the dental laboratory where a plaster model is made. The dental technician mixes dental plaster with water to create a slurry, which is poured into the impression and allowed to set for about 30-60 minutes."},
-{time: 3000, event: "Model pouring (30-60 min)", description: "After the plaster has set, the model is separated from the impression by gently tapping or twisting the tray. Any excess material is trimmed away from the edges of the model."},
-{time: 1000, event: "Separating the model  (10-20 min)", description: "After the plaster has set, the model is separated from the impression by gently tapping or twisting the tray. Any excess material is trimmed away from the edges of the model."},
-{time: 5000, event: "Finishing the model (30-60 min)", description: "The model is then smoothed and polished to ensure that it is free of any rough or uneven surfaces. The dental technician may use a variety of tools, such as dental burs or sandpaper, to shape and refine the model."},
-{time: 1000, event: "Mounting the model (10-20 min)", description: "Finally, the model is mounted on an articulator, which is a device that simulates the movement of the patient's jaws. This allows the dentist or dental technician to analyze the relationship between the upper and lower teeth and plan any necessary treatments."},
+{time: 0, event: "Start Protocol"},
+{time: 1000, event: "Mix dry ingredients in a bowl"},
+{time: 1500, event: "Mix wet ingredients in a separate bowl"},
+{time: 2000, event: "Combine wet and dry ingredients"},
+{time: 2500, event: "Fold in chocolate chips"},
+{time: 3000, event: "Drop spoonfuls onto baking sheet"},
+{time: 3500, event: "Bake for 12-15 minutes"}
 // Add more timers/events here as needed
 ];
 
 // Display the recipe
 var timerTable = document.getElementById("timers");
 for (var i = 0; i < recipe.length; i++) {
-  var row = timerTable.insertRow();
-  row.insertCell().innerHTML = (recipe[i].time / 1000) + "s";
-  row.insertCell().innerHTML = recipe[i].event;
-  row.classList.add("future");
-  row.dataset.index = i;
+var row = timerTable.insertRow();
+row.insertCell().innerHTML = (recipe[i].time / 1000) + "s";
+row.insertCell().innerHTML = recipe[i].event;
+row.classList.add("future");
+row.dataset.index = i;
 }
-
-// timerTable[0].row.
 
 // Set up the timers
 var currentIndex = 0;
 var timerId;
 var rows = document.querySelectorAll("#timers tr");
-
-// set the first event "active"
-rows[currentIndex].classList.remove("future");
-rows[currentIndex].classList.add("start");
-let audio = new Audio("bell01.wav");
+rows[currentIndex].classList.add("active");
 
 function startTimer() {
-    // Highlight the finished timer in red
-    rows[currentIndex].classList.remove("active");
-    rows[currentIndex].classList.add("finished");
-    currentIndex++;
-    if (currentIndex < rows.length) {
-      rows[currentIndex].classList.remove("future");
-      rows[currentIndex].classList.add("active");
-      // Play sound
-      // Wait for user to acknowledge
+// Highlight the finished timer in red
+rows[currentIndex].classList.remove("active");
+rows[currentIndex].classList.add("finished");
+currentIndex++;
+if (currentIndex < rows.length) {
+rows[currentIndex].classList.remove("future");
+rows[currentIndex].classList.add("active");
 
-      txt = recipe[currentIndex].event + "\n"+"Details: "+recipe[currentIndex].description
-      if (currentIndex <= 1)  
-        txt="First step: "+txt
-      else
-        {
-          audio.play();
-          txt = recipe[currentIndex-1].event+" finished.\nNext: "+txt
-        }
+  // Show notification
+  let notification = new Notification("Timer completed", {
+    body: rows[currentIndex].event
+  });
 
-      window.confirm(txt);
-      // start the next timer
-      setTimeout(startTimer, recipe[currentIndex].time);
+  // Play sound
+  let audio = new Audio("alarm01.wav");
+  audio.play();
+
+  // Wait for user to acknowledge
+  window.confirm("Step "+rows[currentIndex].event+" finished. Close the alarm to start the next timer.");
+
+  // start the next timer
+  setTimeout(startTimer, recipe[currentIndex].time);
+}
+}
+/* function startTimer() {
+    currentTimer++;
+    if (currentTimer >= timers.length) {
+      console.log("All timers completed.");
+      return;
     }
-    }
-    /* function startTimer() {
-        currentTimer++;
-        if (currentTimer >= timers.length) {
-          console.log("All timers completed.");
-          return;
-        }
-    */
-    rows.forEach(function(row) {
-    row.addEventListener("click", function() {
-        if (row.classList.contains("active")) {
-          clearTimeout(timerId);
-          startTimer();
-        }
-        if (row.classList.contains("start")) {
-          clearTimeout(timerId);
-          startTimer();
-        }
-      });
+ */
+rows.forEach(function(row) {
+row.addEventListener("click", function() {
+if (row.classList.contains("active")) {
+clearTimeout(timerId);
+startTimer();
+}
+});
 });
 
 // window.confirm("Please click on the first element to start the protocol.");
-// startTimer()
 
-// timerId = setTimeout(startTimer, recipe[currentIndex].time);
+timerId = setTimeout(startTimer, recipe[currentIndex].time);
 </script>
 </body>
 </html>
